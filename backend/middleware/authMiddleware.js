@@ -8,14 +8,12 @@ const protect = asyncHandler(async (req, res, next) => {
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
-    
-    try{
+    try {
       token = req.headers.authorization.split(' ')[1]
-      const decoded = jwt.verify(token, process.env.JWT_SECRET  ) //{ id: '5f76e06d23595f3e0cb5bc1b', iat: 1601742268, exp: 1604334268 }
+      const decoded = jwt.verify(token, process.env.JWT_SECRET) //{ id: '5f76e06d23595f3e0cb5bc1b', iat: 1601742268, exp: 1604334268 }
 
       req.user = await User.findById(decoded.id).select('-password')
-
-    } catch(error) {
+    } catch (error) {
       console.error(error)
       res.status(401)
       throw new Error('Not authorized, token failed')
@@ -30,9 +28,8 @@ const protect = asyncHandler(async (req, res, next) => {
   next()
 })
 
-
-const IsAdmin = (req,res, next) => {
-  if(req.user && req.user.isAdmin) {
+const IsAdmin = (req, res, next) => {
+  if (req.user && req.user.isAdmin) {
     next()
   } else {
     res.status(401)

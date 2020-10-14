@@ -20,7 +20,7 @@ const LoginScreen = ({ location, history }) => {
   console.log(redirect)
 
   useEffect(() => {
-    if(userInfo) {
+    if (userInfo) {
       history.push(redirect)
     }
   }, [redirect, userInfo, history])
@@ -56,7 +56,7 @@ const LoginScreen = ({ location, history }) => {
             onChange={(e) => setPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
-        
+
         <Button type='submit' variant='primary'>
           Sign In
         </Button>
