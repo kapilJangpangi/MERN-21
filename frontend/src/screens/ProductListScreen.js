@@ -1,44 +1,70 @@
-import React, { useEffect } from 'react'
-import { LinkContainer } from 'react-router-bootstrap'
-import { Table, Button, Row, Col } from 'react-bootstrap'
-import { useDispatch, useSelector } from 'react-redux'
-import Message from '../components/Message'
-import Loader from '../components/Loader'
-import { listProduct, deleteProduct } from '../actions/productActions'
+import React, { useEffect } from 'react';
+import { LinkContainer } from 'react-router-bootstrap';
+import { Table, Button, Row, Col } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import Message from '../components/Message';
+import Loader from '../components/Loader';
+import {
+  listProduct,
+  deleteProduct,
+  createProduct,
+} from '../actions/productActions';
+import { PRODUCT_CREATE_RESET } from '../constants/productConstants';
 
 const ProductListScreen = ({ history, match }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const productList = useSelector((state) => state.productList)
-  const { loading, error, products } = productList
+  const productList = useSelector((state) => state.productList);
+  const { loading, error, products } = productList;
 
-  const productDelete = useSelector((state) => state.productDelete)
+  const productDelete = useSelector((state) => state.productDelete);
   const {
     loading: loadingDelete,
     error: errorDelete,
     success: successDelete,
-  } = productDelete
+  } = productDelete;
 
-  const userLogin = useSelector((state) => state.userLogin)
-  const { userInfo } = userLogin
+  const productCreate = useSelector((state) => state.productCreate);
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    product: createdProduct,
+  } = productCreate;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
 
   useEffect(() => {
-    if (userInfo && userInfo.isAdmin) {
-      dispatch(listProduct())
-    } else {
-      history.push('/login')
+    dispatch({ type: PRODUCT_CREATE_RESET });
+
+    if (!userInfo.isAdmin) {
+      history.push('/login');
     }
-  }, [dispatch, history, userInfo, successDelete])
+    if (successCreate) {
+      history.push(`/admin/product/${createdProduct._id}/edit`);
+    } else {
+      dispatch(listProduct());
+    }
+  }, [
+    dispatch,
+    history,
+    userInfo,
+    successDelete,
+    successCreate,
+    createdProduct,
+  ]);
 
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure')) {
-      dispatch(deleteProduct(id))
+      dispatch(deleteProduct(id));
     }
-  }
+  };
 
   const createProductHandler = () => {
-    console.log('Listed')
-  }
+    // Create Product
+    dispatch(createProduct());
+  };
 
   return (
     <>
@@ -54,6 +80,8 @@ const ProductListScreen = ({ history, match }) => {
       </Row>
       {loadingDelete && <Loader />}
       {errorDelete && <Message variant='danger'>{errorDelete}</Message>}
+      {loadingCreate && <Loader />}
+      {errorCreate && <Message variant='danger'>{errorCreate}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
@@ -98,7 +126,7 @@ const ProductListScreen = ({ history, match }) => {
         </Table>
       )}
     </>
-  )
-}
+  );
+};
 
-export default ProductListScreen
+export default ProductListScreen;
