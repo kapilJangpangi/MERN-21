@@ -20,7 +20,7 @@ const Product = ({ product }) => {
          />
       </Card.Text>
       <Card.Text as="h3">
-          ${product.price}
+          ${product.price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
       </Card.Text>
       </Card.Body>
     </Card>
