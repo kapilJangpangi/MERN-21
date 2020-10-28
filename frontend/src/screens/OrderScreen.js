@@ -77,7 +77,7 @@ const OrderScreen = ({ match, history }) => {
     if (!order || order._id !== orderId) {
       dispatch(getOrderDetails(orderId));
     }
-  }, [orderId, order, dispatch, successPay, successDeilver]);
+  }, [orderId, order, dispatch, successPay, successDeilver, history, userInfo]);
 
   const successPaymentHandler = (paymentResult) => {
     //FROM paypal it takes in paymentResult
