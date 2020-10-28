@@ -18,13 +18,15 @@ import {
   PRODUCT_CREATE_REVIEW_FAIL,
   PRODUCT_CREATE_REVIEW_SUCCESS,
   PRODUCT_CREATE_REVIEW_REQUEST,
+  PRODUCT_CREATE_REVIEW_RESET,
 } from '../constants/productConstants';
 
-export const listProduct = () => async (dispatch) => {
+
+export const listProduct = (keyword = '') => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_LIST_REQUEST });
 
-    const { data } = await axios.get('/api/products');
+    const { data } = await axios.get(`/api/products?keyword=${keyword}`);
 
     dispatch({
       type: PRODUCT_LIST_SUCCESS,
@@ -44,6 +46,7 @@ export const listProduct = () => async (dispatch) => {
 export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
+    dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
 
     const { data } = await axios.get(`/api/products/${id}`);
 
@@ -96,8 +99,6 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
   }
 };
 
-
-
 //Create product. Admin only
 export const createProduct = () => async (dispatch, getState) => {
   //getState --> getState().userLogin.userInfo
@@ -120,7 +121,7 @@ export const createProduct = () => async (dispatch, getState) => {
 
     dispatch({
       type: PRODUCT_CREATE_SUCCESS,
-      payload: data
+      payload: data,
     });
   } catch (error) {
     dispatch({
@@ -152,11 +153,15 @@ export const updateProduct = (product) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.put(`/api/products/${product._id}`, product, config);
+    const { data } = await axios.put(
+      `/api/products/${product._id}`,
+      product,
+      config
+    );
 
     dispatch({
       type: PRODUCT_UPDATE_SUCCESS,
-      payload: data
+      payload: data,
     });
   } catch (error) {
     dispatch({
@@ -169,11 +174,11 @@ export const updateProduct = (product) => async (dispatch, getState) => {
   }
 };
 
-
-
-
 //Create product Review.
-export const createProductReview = (productId, review) => async (dispatch, getState) => {
+export const createProductReview = (productId, review) => async (
+  dispatch,
+  getState
+) => {
   //getState --> getState().userLogin.userInfo
   try {
     dispatch({
@@ -206,4 +211,3 @@ export const createProductReview = (productId, review) => async (dispatch, getSt
     });
   }
 };
-
