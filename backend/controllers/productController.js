@@ -6,14 +6,22 @@ import products from '../data/products.js';
 // @route GET/api/products or /api/products?keyword=""
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-  const keyword = req.query.keyword ? {
-    name: {
-      $regex: req.query.keyword,
-      $options: 'i' //caseinsensitive
-    }
-  } : {}
-  const product = await Product.find({ ...keyword });
-  res.json(product);
+  const pageSize = 10;
+  const page = Number(req.query.pageNumber) || 1;
+
+  const keyword = req.query.keyword
+    ? {
+        name: {
+          $regex: req.query.keyword,
+          $options: 'i', //caseinsensitive
+        },
+      }
+    : {};
+  const count = await Product.countDocuments({ ...keyword });
+  const product = await Product.find({ ...keyword })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+  res.json({ product, page, pages: Math.ceil(count / pageSize) });
 });
 
 // @desc  Fetch single product
